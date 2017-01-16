@@ -13,6 +13,7 @@ Build-Depends: cmake,
                libxml2-dev,
                pkg-config,
                python-all-dev (>> 2.6.6-3~),
+               swig (>= 2.0),
                zlib1g-dev
 Standards-Version: 3.9.4
 Homepage: http://openbabel.sourceforge.net

@@ -1,0 +1,10 @@
+Doxyfile
+build/
+doc/CMakeCache.txt
+doc/CMakeFiles/
+doc/Makefile
+doc/cmake_install.cmake
+scripts/perl/OpenBabel.pm
+scripts/perl/openbabel-perl.cpp
+scripts/python/openbabel-python.cpp
+scripts/python/openbabel.py
