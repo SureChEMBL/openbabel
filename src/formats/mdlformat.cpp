@@ -819,7 +819,7 @@ namespace OpenBabel
       set<OBBond*> stereodbl;
       if (mol.GetDimension() == 0 && !pConv->IsOption("S", OBConversion::OUTOPTIONS))
         GetUpDown(mol, updown, stereodbl);
-      
+           
 
       // The counts line:
       // aaabbblllfffcccsssxxxrrrpppiiimmmvvvvvv
@@ -857,11 +857,13 @@ namespace OpenBabel
       snprintf(buff, BUFF_SIZE, "%3d%3d  0  0%3d  0  0  0  0  0999 V2000\n",
                mol.NumAtoms(), mol.NumBonds(), chiralFlag);
       ofs << buff;
-
+      
+      map<string, vector<unsigned int> > group_to_atoms;
+      unsigned int counter = 1;
       OBAtom *atom;
       vector<OBAtom*>::iterator i;
       int charge = 0;
-      for (atom = mol.BeginAtom(i); atom; atom = mol.NextAtom(i)) {
+      for (atom = mol.BeginAtom(i); atom; atom = mol.NextAtom(i), counter++) {
         // convert charge
         switch (atom->GetFormalCharge()) {
           case 1: charge = 3; break;
@@ -886,8 +888,17 @@ namespace OpenBabel
           atom->GetAtomicNum() ? etab.GetSymbol(atom->GetAtomicNum()) : "* ",
           0,charge,stereo,0,0,valence,0,0,0,0,0,0);
         ofs << buff << endl;
-        }
 
+	if (atom->HasData("_SGroup"))
+	  {
+	    OBPairData *atom_data = (OBPairData*) atom->GetData("_SGroup");
+	    string value = atom_data->GetValue();
+	    group_to_atoms[value].push_back(counter);
+	  }	  
+      }
+
+        map<string, vector<unsigned int> > group_to_bonds;
+	counter = 1;
         OBAtom *nbr;
         OBBond *bond;
         vector<OBBond*>::iterator j;
@@ -923,6 +934,14 @@ namespace OpenBabel
               ofs << setw(3) << bond->GetBO(); // bond type
               ofs << setw(3) << stereo; // bond stereo
               ofs << "  0  0  0" << endl;
+	
+	      if (bond->HasData("_SGroup"))
+		{
+		  OBPairData *bond_data = (OBPairData*) bond->GetData("_SGroup");
+		  string value = bond_data->GetValue();
+		  group_to_bonds[value].push_back(counter);
+		}
+	      counter++;
             }
           }
         }
@@ -986,7 +1005,136 @@ namespace OpenBabel
 	  }
 	  ofs << endl;
 	}
+	 // SGroup data
+			/*
+M  STY  2   1 SRU   2 SRU
+M  SLB  2   1   1   2   2
+M  SCN  2   1 HT    2 HT 
+M  SAL   1  4   5   6   7   8
+M  SBL   1  2   4   8
+M  SDI   1  4    7.8800   -8.0000    7.8800   -7.1500
+M  SDI   1  4    9.6500   -6.9800    9.6500   -7.8300
+M  SMT   1 B
+		*/
+      OBSetData *group = (OBSetData *) mol.GetData("_SGroupBrackets");
+      if (group)
+      {
+	size_t group_size = group->GetData().size();
+	{ // STY
+	  unsigned int nEntries = 0;
+	  std::stringstream ss;
+	  for (size_t i=0; i < group_size; i++)
+	    {
+	      ss<<" "<<std::setw(3)<<i+1<<" "<<std::setw(3)<<"SRU";
+	      nEntries++;
+	      if (nEntries == 8)
+	      {
+		ofs<<"M  STY"<<std::setw(3)<<nEntries<<ss.str()<<std::endl;
+		nEntries -= 8;
+		ss.str(std::string());
+	      }	    
+	    }
+	  if(nEntries) 
+	    ofs<<"M  STY"<<std::setw(3)<<nEntries<<ss.str()<<std::endl;
+	}
+	{ // SLB
+	  unsigned int nEntries = 0;
+	  std::stringstream ss;
+	  for (size_t i=0; i < group_size; i++)
+	    {
+	      ss<<" "<<std::setw(3)<<i+1<<" "<<std::setw(3)<<i+1;
+	      nEntries++;
+	      if (nEntries == 8)
+		{
+		  ofs<<"M  SLB"<<std::setw(3)<<nEntries<<ss.str()<<std::endl;
+		  nEntries -= 8;
+		  ss.str(std::string());
+		}
+	    }
+	  if(nEntries) 
+	    ofs<<"M  SLB"<<std::setw(3)<<nEntries<<ss.str()<<std::endl;
+	}
+	{ // SCN
+	   unsigned int nEntries = 0;
+	   std::stringstream ss;
+	   for (size_t i=0; i < group_size; i++)
+	     {
+	       ss<<" "<<std::setw(3)<<i+1<<" "<<std::setw(3)<<"HT ";
+	       nEntries++;
+	       if (nEntries == 8)
+		 {
+		   ofs<<"M  SCN"<<std::setw(3)<<nEntries<<ss.str()<<std::endl;
+		   nEntries -= 8;
+		   ss.str(std::string());
+		 }
+	     }
+	   if(nEntries) 
+	     ofs<<"M  SCN"<<std::setw(3)<<nEntries<<ss.str()<<std::endl;
+	}
+
+	int group_id = 1;
+        for (std::vector< OBGenericData * >::iterator it = group->GetBegin(); it != group->GetEnd(); ++it, group_id++)
+        {
+	  stringstream str;
+	  str << group_id;
+
+	  { // SAL
+	    const vector<unsigned int> &atom_idx = group_to_atoms[str.str()];
+	    unsigned int nEntries = 0;
+	    std::stringstream ss;
+	    for (size_t i=0; i < atom_idx.size(); i++)
+	    {
+	      ss<<" "<<std::setw(3)<<atom_idx[i];
+	      nEntries++;
+	      if (nEntries == 8)
+		{
+		  ofs<<"M  SAL"<< setw(4) << str.str()<<std::setw(3)<<nEntries<<ss.str()<<std::endl;
+		  nEntries -= 8;
+		  ss.str(std::string());
+		}
+	    }
+	    if(nEntries) 
+	      ofs<<"M  SAL"<< setw(4) << str.str()<<std::setw(3)<<nEntries<<ss.str()<<std::endl;
+	  }
+	  { // SBL
+	    const vector<unsigned int> &bond_idx = group_to_bonds[str.str()];
+	    if (bond_idx.size() == 2)
+	      {
+		ofs << "M  SBL" << setw(4) << str.str() << setw(3) << "2";
+		ofs << " " << setw(3) << bond_idx.front();
+		ofs << " " << setw(3) << bond_idx.back();
+		ofs << endl;
+	      }
+	  }
+	  
+          OBSetData *coords = dynamic_cast<OBSetData*>(*it);
+          if (coords) // SDI
+          {
+	    map<string, string> box;
+	    for (std::vector< OBGenericData * >::iterator it2 = coords->GetBegin(); it2 != coords->GetEnd(); ++it2)
+	      {
+		OBPairData *val = dynamic_cast<OBPairData*>(*it2);
+		if (val)
+		  {
+		    string attr = val->GetAttribute();
+		    string value = val->GetValue();
+		    box[attr] = value;
+		  }
+	      }
+	    if (!box.empty())
+	      {
+		ofs << "M  SDI" << setw(4) << group_id << "  4" <<  box["x1"] << box["y2"] << box["x1"] << box["y1"] << endl;
+		ofs << "M  SDI" << setw(4) << group_id << "  4" <<  box["x2"] << box["y1"] << box["x2"] << box["y2"] << endl;
+	      }
+	  
+	    // SMT
+	    string lbl = box["label"];
+	    if (!lbl.empty())
+	      ofs<<"M  SMT "<<std::setw(3)<<group_id<<" "<<lbl<<std::endl;	  
+	  }
+        }
       }
+    }
 
     ofs << "M  END" << endl;
 

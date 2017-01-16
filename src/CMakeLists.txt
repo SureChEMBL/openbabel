@@ -177,7 +177,7 @@ else(BUILD_SHARED)
   endforeach(plugingroup descriptors fingerprints forcefields ops charges)
 
   if(WITH_STATIC_INCHI)
-    add_subdirectory(formats/inchi103)
+    add_subdirectory(formats/libinchi)
     set(openbabel_srcs ${openbabel_srcs} formats/getinchi.cpp ops/unique.cpp)
     set(libs ${libs} inchi)
   endif(WITH_STATIC_INCHI)
