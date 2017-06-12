@@ -8,3 +8,5 @@ scripts/perl/OpenBabel.pm
 scripts/perl/openbabel-perl.cpp
 scripts/python/openbabel-python.cpp
 scripts/python/openbabel.py
+
+/.pc/
