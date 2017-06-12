@@ -1,3 +1,9 @@
+openbabel (2.3.2+osra-1) unstable; urgency=medium
+
+  * New version with OSRA patches.
+
+ -- Yury Zavarin <yzavarin@ebi.ac.uk>  Mon, 12 Jun 2017 12:51:24 +0100
+
 openbabel (2.3.2+dfsg-2.2build1) xenial; urgency=medium
 
   * Rebuild for Perl 5.22.1.
