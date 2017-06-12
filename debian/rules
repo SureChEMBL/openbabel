@@ -5,6 +5,7 @@
 -include /usr/share/python/python.mk
 
 PYVERS=$(shell pyversions -vs)
+PERL_ARCHLIB := $(shell perl -MConfig -e 'print $$Config{vendorarch}')
 
 export CPPFLAGS     := $(shell dpkg-buildflags --get CPPFLAGS)
 export CFLAGS       := $(shell dpkg-buildflags --get CFLAGS) $(CPPFLAGS)
@@ -15,9 +16,8 @@ DH_AUTO_CONFIGURE_OPTS := -DCMAKE_BUILD_TYPE=None \
                           -DPYTHON_BINDINGS=ON -DPERL_BINDINGS=ON \
                           -DOBPERL_INSTALLDIRS=vendor \
                           -DCMAKE_SKIP_RPATH=ON -DBUILD_GUI=ON \
-                          -DENABLE_OPENMP=ON \
-                          -DRUN_SWIG=ON
-ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
+                          -DENABLE_OPENMP=ON
+ifneq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 DH_AUTO_CONFIGURE_OPTS += -DENABLE_TESTS=OFF
 endif
 
@@ -44,7 +44,8 @@ override_dh_auto_install:
 	done
 
 override_dh_install:
-	dh_install -Xperllocal.pod --list-missing
+	dh_install --list-missing -Nlibchemistry-openbabel-perl
+	dh_install --list-missing -plibchemistry-openbabel-perl -Xperllocal.pod --autodest $(PERL_ARCHLIB)
 
 override_dh_installdocs:
 	dh_installdocs -Xjquery.js
@@ -57,3 +58,6 @@ override_dh_auto_test:
 	-BABEL_LIBDIR=$(CURDIR)/build/lib \
 	LD_LIBRARY_PATH=$(CURDIR)/build/lib \
 	dh_auto_test
+
+override_dh_strip:
+	dh_strip --dbg-package=openbabel-dbg

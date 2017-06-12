@@ -1,8 +1,73 @@
-openbabel (2.3.2+osra-1) precise; urgency=low
+openbabel (2.3.2+dfsg-2.2build1) xenial; urgency=medium
 
-  * Version 2.3.2 with OSRA patches applied.
+  * Rebuild for Perl 5.22.1.
 
- -- Yury Zavarin <yzavarin@ebi.ac.uk>  Mon, 16 Jan 2017 17:54:18 +0000
+ -- Colin Watson <cjwatson@ubuntu.com>  Fri, 18 Dec 2015 10:42:03 +0000
+
+openbabel (2.3.2+dfsg-2.2) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Apply Ubuntu patch for the libstdc++ transition (Closes: #796854)
+
+  [ Matthias Klose ]
+  * Rename libopenbabel4 to libopenbabel4v5, follow-up transition
+    to the libstdc++6 transition.
+  * Add Conflict/Replaces to the old library.
+
+ -- Simon McVittie <smcv@debian.org>  Mon, 31 Aug 2015 22:18:57 +0100
+
+openbabel (2.3.2+dfsg-2.1) unstable; urgency=medium
+
+  * Non maintainer upload.
+  * Fix building with GCC 5. Closes: #778044.
+
+ -- Matthias Klose <doko@debian.org>  Fri, 10 Jul 2015 17:35:33 +0200
+
+openbabel (2.3.2+dfsg-2) unstable; urgency=medium
+
+  [ Daniel Leidert ]
+  * debian/control: Added new package with debugging symbols.
+    (Vcs-Browser, Vcs-Svn): Fixed vcs-field-not-canonical.
+  * debian/openbabel.install: Added obrms binary.
+  * debian/rules: Put debugging symbols into -dbg package.
+  * debian/patches/715668_fix_babel_segfault.patch: Added.
+    - Fix a potential crash in the babel program (closes: #715668)
+  * debian/patches/series: Adjusted.
+
+  [ Michael Banck ]
+  * debian/rules (DH_AUTO_CONFIGURE_OPTS): Run testsuite only if nocheck is not
+    set, thanks to Matthias Klose (closes: #759196).
+  * Acknowledge NMUs.
+
+ -- Michael Banck <mbanck@debian.org>  Sat, 20 Sep 2014 14:43:24 +0200
+
+openbabel (2.3.2+dfsg-1.4) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Update to use wxwidgets3.0.
+
+ -- Olly Betts <olly@survex.com>  Wed, 03 Sep 2014 23:48:34 +0000
+
+openbabel (2.3.2+dfsg-1.3) unstable; urgency=medium
+
+  * Non-maintainer upload
+  * apply mistakenly omitted part of gregor's patch removing
+    libchemistry-openbabel-perl.install.
+    Really Closes: #752800. Thanks to Niko Tyni
+
+ -- Damyan Ivanov <dmn@debian.org>  Mon, 11 Aug 2014 08:07:30 +0000
+
+openbabel (2.3.2+dfsg-1.2) unstable; urgency=medium
+
+  [ gregor herrmann ]
+  * Non-maintainer upload.
+  * Fix "hardcodes /usr/lib/perl5":
+    - remove debian/libchemistry-openbabel-perl.install
+    - pass perl directory to dh_install in debian/rules,
+      expanded from $Config{vendorarch}
+    (Closes: #752800)
+
+ -- Damyan Ivanov <dmn@debian.org>  Mon, 04 Aug 2014 11:31:02 +0000
 
 openbabel (2.3.2+dfsg-1.1) unstable; urgency=low
 

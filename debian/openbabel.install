@@ -10,6 +10,7 @@
 /usr/bin/obminimize
 /usr/bin/obprobe
 /usr/bin/obprop
+/usr/bin/obrms
 /usr/bin/obrotamer
 /usr/bin/obrotate
 /usr/bin/obspectrophore

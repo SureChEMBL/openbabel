@@ -13,12 +13,11 @@ Build-Depends: cmake,
                libxml2-dev,
                pkg-config,
                python-all-dev (>> 2.6.6-3~),
-               swig (>= 2.0),
                zlib1g-dev
 Standards-Version: 3.9.4
 Homepage: http://openbabel.sourceforge.net
-Vcs-Browser: http://svn.debian.org/wsvn/debichem/unstable/openbabel/
-Vcs-Svn: svn://svn.debian.org/svn/debichem/unstable/openbabel/
+Vcs-Browser: http://anonscm.debian.org/viewvc/debichem/unstable/openbabel/
+Vcs-Svn: svn://anonscm.debian.org/debichem/unstable/openbabel/
 
 Package: openbabel
 Architecture: any
@@ -77,8 +76,8 @@ Description: Chemical toolbox utilities (graphical user interface)
 Package: libopenbabel-dev
 Architecture: any
 Section: libdevel
-Depends: libopenbabel4 (= ${binary:Version}), ${misc:Depends}
-#Suggests: libopenbabel-doc
+Depends: libopenbabel4v5 (= ${binary:Version}), ${misc:Depends}
+Suggests: libopenbabel-doc
 Description: Chemical toolbox library (development files)
  Open Babel is a chemical toolbox designed to speak the many languages of
  chemical data. It allows one to search, convert, analyze, or store data from
@@ -97,10 +96,12 @@ Description: Chemical toolbox library (development files)
  .
  This package contains the static library and the header files.
 
-Package: libopenbabel4
+Package: libopenbabel4v5
 Architecture: any
 Section: libs
 Depends: ${misc:Depends}, ${shlibs:Depends}
+Conflicts: libopenbabel4
+Replaces: libopenbabel4
 Description: Chemical toolbox library
  Open Babel is a chemical toolbox designed to speak the many languages of
  chemical data. It allows one to search, convert, analyze, or store data from
@@ -119,27 +120,27 @@ Description: Chemical toolbox library
  .
  This package contains the shared library.
 
-#Package: libopenbabel-doc
-#Architecture: all
-#Section: doc
-#Depends: libjs-jquery, ${misc:Depends}
-#Description: Chemical toolbox library (documentation)
-# Open Babel is a chemical toolbox designed to speak the many languages of
-# chemical data. It allows one to search, convert, analyze, or store data from
-# molecular modeling, chemistry, solid-state materials, biochemistry, or related
-# areas.  Features include:
-# .
-#  * Hydrogen addition and deletion
-#  * Support for Molecular Mechanics
-#  * Support for SMARTS molecular matching syntax
-#  * Automatic feature perception (rings, bonds, hybridization, aromaticity)
-#  * Flexible atom typer and perception of multiple bonds from atomic coordinates
-#  * Gasteiger-Marsili partial charge calculation
-# .
-# File formats Open Babel supports include PDB, XYZ, CIF, CML, SMILES, MDL
-# Molfile, ChemDraw, Gaussian, GAMESS, MOPAC and MPQC.
-# .
-# This package contains the library documentation.
+Package: libopenbabel-doc
+Architecture: all
+Section: doc
+Depends: libjs-jquery, ${misc:Depends}
+Description: Chemical toolbox library (documentation)
+ Open Babel is a chemical toolbox designed to speak the many languages of
+ chemical data. It allows one to search, convert, analyze, or store data from
+ molecular modeling, chemistry, solid-state materials, biochemistry, or related
+ areas.  Features include:
+ .
+  * Hydrogen addition and deletion
+  * Support for Molecular Mechanics
+  * Support for SMARTS molecular matching syntax
+  * Automatic feature perception (rings, bonds, hybridization, aromaticity)
+  * Flexible atom typer and perception of multiple bonds from atomic coordinates
+  * Gasteiger-Marsili partial charge calculation
+ .
+ File formats Open Babel supports include PDB, XYZ, CIF, CML, SMILES, MDL
+ Molfile, ChemDraw, Gaussian, GAMESS, MOPAC and MPQC.
+ .
+ This package contains the library documentation.
 
 Package: python-openbabel
 Architecture: any
@@ -185,3 +186,27 @@ Description: Chemical toolbox library (perl bindings)
  Molfile, ChemDraw, Gaussian, GAMESS, MOPAC and MPQC.
  .
  This package contains the Perl binding.
+
+Package: openbabel-dbg
+Architecture: any
+Section: debug
+Priority: extra
+Depends: openbabel (= ${binary:Version}) | openbabel-gui (= ${binary:Version}) | libopenbabel4v5 (= ${binary:Version}) | python-openbabel (= ${binary:Version}) | libchemistry-openbabel-perl (= ${binary:Version}),
+         ${misc:Depends}
+Description: Chemical toolbox library (debugging symbols)
+ Open Babel is a chemical toolbox designed to speak the many languages of
+ chemical data. It allows one to search, convert, analyze, or store data from
+ molecular modeling, chemistry, solid-state materials, biochemistry, or related
+ areas.  Features include:
+ .
+  * Hydrogen addition and deletion
+  * Support for Molecular Mechanics
+  * Support for SMARTS molecular matching syntax
+  * Automatic feature perception (rings, bonds, hybridization, aromaticity)
+  * Flexible atom typer and perception of multiple bonds from atomic coordinates
+  * Gasteiger-Marsili partial charge calculation
+ .
+ File formats Open Babel supports include PDB, XYZ, CIF, CML, SMILES, MDL
+ Molfile, ChemDraw, Gaussian, GAMESS, MOPAC and MPQC.
+ .
+ This package contains the debugging symbols.
